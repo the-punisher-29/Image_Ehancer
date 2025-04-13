@@ -59,14 +59,12 @@ if image_source == "Sample Images":
     image_path = os.path.join(sample_images_folder, selected_image)
     input_image = Image.open(image_path).convert("RGB")
     input_image_np = np.array(input_image)
-    input_image_bgr = cv2.cvtColor(input_image_np, cv2.COLOR_RGB2BGR)
 else:
     # Upload image
     uploaded_file = st.file_uploader("📤 Upload an Image", type=["jpg", "png", "jpeg", "bmp"])
     if uploaded_file:
         input_image = Image.open(uploaded_file).convert("RGB")  # Ensure RGB
-        input_image_np = np.array(input_image)                    
-        input_image_bgr = cv2.cvtColor(input_image_np, cv2.COLOR_RGB2BGR)     
+        input_image_np = np.array(input_image)                        
 # Method selection
 sr_method = st.selectbox(
     "Select Super-Resolution Method",
