@@ -99,7 +99,7 @@ if st.button("Process Image"):
             upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_NEAREST)
             return gaussian_blur(upscaled)
 
-        output_image_bgr = upscale_nn_gaussian(input_image_bgr)
+        output_image_bgr = upscale_nn_gaussian(input_image_np)
         output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
 
     elif sr_method == "Bicubic Interpolation + Bilinear Filter":
@@ -115,7 +115,7 @@ if st.button("Process Image"):
             upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
             return bilinear_filter(upscaled)
 
-        output_image_bgr = upscale_bicubic_bilinear(input_image_bgr)
+        output_image_bgr = upscale_bicubic_bilinear(input_image_np)
         output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
 
     elif sr_method == "Lanczos + Guided + Sharpen":
@@ -141,7 +141,7 @@ if st.button("Process Image"):
             guided = guided_filter(upscaled)
             return sharpen(guided)
 
-        output_image_bgr = upscale_lanczos_guided_sharp(input_image_bgr)
+        output_image_bgr = upscale_lanczos_guided_sharp(input_image_np)
         output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
 
     elif sr_method == "SRCNN":
