@@ -90,59 +90,59 @@ if st.button("Process Image"):
             #     output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB) # Store in std output
 
     elif sr_method == "Nearest Neighbour Interpolation + Gaussian Filter":
-                st.info("Processing using Nearest Neighbor + Gaussian Blur...")
+        st.info("Processing using Nearest Neighbor + Gaussian Blur...")
 
-                def gaussian_blur(image):
-                    return cv2.GaussianBlur(image, (5, 5), 1)
+        def gaussian_blur(image):
+            return cv2.GaussianBlur(image, (5, 5), 1)
 
-                def upscale_nn_gaussian(img):
-                    upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_NEAREST)
-                    return gaussian_blur(upscaled)
+        def upscale_nn_gaussian(img):
+            upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_NEAREST)
+            return gaussian_blur(upscaled)
 
-                output_image_bgr = upscale_nn_gaussian(input_image_bgr)
-                output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
+        output_image_bgr = upscale_nn_gaussian(input_image_bgr)
+        output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
 
     elif sr_method == "Bicubic Interpolation + Bilinear Filter":
-                st.info("Processing using Bicubic + Bilinear Filtering...")
+        st.info("Processing using Bicubic + Bilinear Filtering...")
 
-                def bilinear_filter(image):
-                    h, w = image.shape[:2]
-                    # Slight rescale for smoothing
-                    temp = cv2.resize(image, (int(w * 0.9), int(h * 0.9)), interpolation=cv2.INTER_LINEAR)
-                    return cv2.resize(temp, (w, h), interpolation=cv2.INTER_LINEAR)
+        def bilinear_filter(image):
+            h, w = image.shape[:2]
+            # Slight rescale for smoothing
+            temp = cv2.resize(image, (int(w * 0.9), int(h * 0.9)), interpolation=cv2.INTER_LINEAR)
+            return cv2.resize(temp, (w, h), interpolation=cv2.INTER_LINEAR)
 
-                def upscale_bicubic_bilinear(img):
-                    upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
-                    return bilinear_filter(upscaled)
+        def upscale_bicubic_bilinear(img):
+            upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+            return bilinear_filter(upscaled)
 
-                output_image_bgr = upscale_bicubic_bilinear(input_image_bgr)
-                output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
+        output_image_bgr = upscale_bicubic_bilinear(input_image_bgr)
+        output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
 
     elif sr_method == "Lanczos + Guided + Sharpen":
-                st.info("Processing using Lanczos + Guided Filter + Sharpening...")
+        st.info("Processing using Lanczos + Guided Filter + Sharpening...")
 
-                try:
-                    from cv2 import ximgproc
-                except ImportError:
-                    st.error("This method requires opencv-contrib-python. Please install it with: pip install opencv-contrib-python")
-                    st.stop()
+        try:
+            from cv2 import ximgproc
+        except ImportError:
+            st.error("This method requires opencv-contrib-python. Please install it with: pip install opencv-contrib-python")
+            st.stop()
 
-                def sharpen(image):
-                    kernel = np.array([[0, -1, 0],
-                                    [-1, 5, -1],
-                                    [0, -1, 0]])
-                    return cv2.filter2D(image, -1, kernel)
+        def sharpen(image):
+            kernel = np.array([[0, -1, 0],
+                            [-1, 5, -1],
+                            [0, -1, 0]])
+            return cv2.filter2D(image, -1, kernel)
 
-                def guided_filter(img, radius=5, eps=1e-2):
-                    return cv2.ximgproc.guidedFilter(guide=img, src=img, radius=radius, eps=eps)
+        def guided_filter(img, radius=5, eps=1e-2):
+            return cv2.ximgproc.guidedFilter(guide=img, src=img, radius=radius, eps=eps)
 
-                def upscale_lanczos_guided_sharp(img):
-                    upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_LANCZOS4)
-                    guided = guided_filter(upscaled)
-                    return sharpen(guided)
+        def upscale_lanczos_guided_sharp(img):
+            upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_LANCZOS4)
+            guided = guided_filter(upscaled)
+            return sharpen(guided)
 
-                output_image_bgr = upscale_lanczos_guided_sharp(input_image_bgr)
-                output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
+        output_image_bgr = upscale_lanczos_guided_sharp(input_image_bgr)
+        output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
 
     elif sr_method == "SRCNN":
         output_image = process_srcnn(input_image_np)
