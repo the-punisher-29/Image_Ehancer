@@ -70,7 +70,7 @@ else:
 # Method selection
 sr_method = st.selectbox(
     "Select Super-Resolution Method",
-    ["Histogram Equalization", "Nearest Neighbour Interpolation + Gaussian Filter","Bicubic Interpolation + Bilinear Filter", "SRCNN", "ESRGAN", "Codeformer"]
+    ["Histogram Equalization", "Interpolation+Bilinear (Simple)", "SRCNN", "ESRGAN", "Codeformer"]
 )
 
 if st.button("Process Image"):
