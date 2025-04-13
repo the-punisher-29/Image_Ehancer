@@ -5,3 +5,4 @@ scikit-image
 opencv-python-headless
 torch
 torchvision
+tensorflow==2.12.0
