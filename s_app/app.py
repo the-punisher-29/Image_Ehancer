@@ -64,11 +64,12 @@ else:
     uploaded_file = st.file_uploader("📤 Upload an Image", type=["jpg", "png", "jpeg", "bmp"])
     if uploaded_file:
         input_image = Image.open(uploaded_file).convert("RGB")  # Ensure RGB
-        input_image_np = np.array(input_image)                        
+        input_image_np = np.array(input_image)
+
 # Method selection
 sr_method = st.selectbox(
     "Select Super-Resolution Method",
-    ["Histogram Equalization", "Interpolation+Bilinear (Simple)", "SRCNN", "ESRGAN", "Codeformer"]
+    ["Histogram Equalization", "Interpolation+Bilinear", "SRCNN", "ESRGAN", "Codeformer"]
 )
 
 if st.button("Process Image"):
@@ -81,12 +82,12 @@ if st.button("Process Image"):
         enhanced_image = cv2.cvtColor(ycrcb_eq, cv2.COLOR_YCrCb2RGB)
         output_image = cv2.resize(enhanced_image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
 
-    elif sr_method == "Interpolation+Bilinear (Simple)":
-        st.info("Processing using Simple Interpolation + Sharpening...")
-        upscaled_bgr = cv2.resize(input_image_bgr, None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)
-        sharpening_kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
-        output_image_bgr = cv2.filter2D(upscaled_bgr, -1, sharpening_kernel)
-        output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB) # Store in std output
+    elif sr_method == "Interpolation+Bilinear":
+        upscaled = cv2.resize(input_image_np, None, fx=2, fy=2, interpolation=cv2.INTER_LINEAR)
+        sharpening_kernel = np.array([[0, -1, 0],
+                                      [-1, 5, -1],
+                                      [0, -1, 0]])
+        output_image = cv2.filter2D(upscaled, -1, sharpening_kernel)
 
     elif sr_method == "SRCNN":
         output_image = process_srcnn(input_image_np)
@@ -128,4 +129,3 @@ if st.button("Process Image"):
     # st.markdown(f'<div class="metric-label">🔍 PSNR:</div> <p>{psnr_value:.2f} dB</p>', unsafe_allow_html=True)
     # st.markdown(f'<div class="metric-label">🔍 SSIM:</div> <p>{ssim_value:.4f}</p>', unsafe_allow_html=True)
     # st.markdown('</div>', unsafe_allow_html=True)
-
