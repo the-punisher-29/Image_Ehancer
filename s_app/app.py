@@ -59,13 +59,14 @@ if image_source == "Sample Images":
     image_path = os.path.join(sample_images_folder, selected_image)
     input_image = Image.open(image_path).convert("RGB")
     input_image_np = np.array(input_image)
+    input_image_bgr = cv2.cvtColor(input_image_np, cv2.COLOR_RGB2BGR)
 else:
     # Upload image
     uploaded_file = st.file_uploader("📤 Upload an Image", type=["jpg", "png", "jpeg", "bmp"])
     if uploaded_file:
         input_image = Image.open(uploaded_file).convert("RGB")  # Ensure RGB
-        input_image_np = np.array(input_image)
-
+        input_image_np = np.array(input_image)                    
+        input_image_bgr = cv2.cvtColor(input_image_np, cv2.COLOR_RGB2BGR)     
 # Method selection
 sr_method = st.selectbox(
     "Select Super-Resolution Method",
@@ -99,7 +100,7 @@ if st.button("Process Image"):
             upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_NEAREST)
             return gaussian_blur(upscaled)
 
-        output_image_bgr = upscale_nn_gaussian(input_image_np)
+        output_image_bgr = upscale_nn_gaussian(input_image_bgr)
         output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
 
     elif sr_method == "Bicubic Interpolation + Bilinear Filter":
@@ -115,7 +116,7 @@ if st.button("Process Image"):
             upscaled = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
             return bilinear_filter(upscaled)
 
-        output_image_bgr = upscale_bicubic_bilinear(input_image_np)
+        output_image_bgr = upscale_bicubic_bilinear(input_image_bgr)
         output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
 
     elif sr_method == "Lanczos + Guided + Sharpen":
@@ -141,7 +142,7 @@ if st.button("Process Image"):
             guided = guided_filter(upscaled)
             return sharpen(guided)
 
-        output_image_bgr = upscale_lanczos_guided_sharp(input_image_np)
+        output_image_bgr = upscale_lanczos_guided_sharp(input_image_bgr)
         output_image_std = cv2.cvtColor(output_image_bgr, cv2.COLOR_BGR2RGB)
 
     elif sr_method == "SRCNN":
